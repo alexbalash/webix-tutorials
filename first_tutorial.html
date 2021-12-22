@@ -1,0 +1,112 @@
+<!doctype html>
+
+<head>
+	<meta charset="utf-8">
+	<title> Test DataTable</title>
+	<script type="text/javascript" src="http://cdn.webix.com/edge/webix.js"></script>
+	<link rel="stylesheet" type="text/css" href="http://cdn.webix.com/edge/webix.css">
+
+	<style type="text/css">
+		.webix_list_item {
+			border: 0px;
+		}
+
+		.webix_list {
+			background-color: lightgrey;
+		}
+
+		.webix_template {
+			text-align: center;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="test"></div>
+	<script type="text/javascript" charset="utf-8">
+		let menu = [
+			{ id: 1, title: "Dashboard" },
+			{ id: 2, title: "Users" },
+			{ id: 3, title: "Products" },
+			{ id: 4, title: "Locations" },
+		];
+
+		let films_dataset = [
+			{ id: 1, title: "The Shawshank Redemption", year: 1994, votes: 678790, rating: 9.2, rank: 1 },
+			{ id: 2, title: "The Godfather", year: 1972, votes: 511495, rating: 9.2, rank: 2 },
+			{ id: 3, title: "The Godfather: Part II", year: 1974, votes: 319352, rating: 9.0, rank: 3 },
+			{ id: 4, title: "The Good, the Bad and the Ugly", year: 1966, votes: 213030, rating: 8.9, rank: 4 },
+			{ id: 5, title: "My Fair Lady", year: 1964, votes: 533848, rating: 8.9, rank: 5 },
+			{ id: 6, title: "12 Angry Men", year: 1957, votes: 164558, rating: 8.9, rank: 6 }
+		];
+
+		webix.ui({
+			rows: [
+				{
+					padding: 10,
+					view: "toolbar",
+					css: "webix_dark",
+					elements: [
+						{ view: "label", label: "My App", gravity: 10 },
+						{ view: "icon", icon: "wxi-user" },
+						{ view: "button", value: "Profile", gravity: 1, css: "webix_transparent", autowidth: true },
+
+					]
+
+				},
+				{
+					cols: [
+						{
+							view: "list",
+							id: "menu",
+							data: menu,
+							template: "#title#",
+							gravity: 0.5,
+
+
+						},
+
+						{
+							view: "datatable",
+							id: "films",
+							data: films_dataset,
+							autoConfig: true,
+							gravity: 3
+						},
+
+						{
+							view: "form",
+							id: "film_form",
+							gravity: 1,
+
+							elements: [
+								{
+									margin: 20, rows: [{ template: "Edit films", type: "section" },
+									{ view: "text", name: "title", id: "inp_title", label: "Title" },
+									{ view: "text", name: "year", id: "inp_year", label: "Year" },
+									{ view: "text", name: "ratings", id: "inp_ratings", label: "Ratings" },
+									{ view: "text", name: "votes", id: "inp_votes", label: "Votes" }]
+								},
+								{
+									margin: 20, cols: [
+										{ view: "button", value: "Add new", css: "webix_primary", height: 40 },
+										{ view: "button", value: "Clear", height: 40 }
+									]
+								},
+								{}
+
+							]
+						}
+					]
+				},
+
+				{
+					view: "template", template: "The software is provided by <a href=\"https://webix.com\">https://webix.com</a>. All rights reserved (c) ", autoheight: true
+				}
+			]
+		});
+
+	</script>
+</body>
+
+</html>
