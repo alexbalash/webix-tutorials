@@ -40,6 +40,25 @@
 			{ id: 6, title: "12 Angry Men", year: 1957, votes: 164558, rating: 8.9, rank: 6 }
 		];
 
+		const popup_data = [
+			{ id: 1, title: "Settings" },
+			{ id: 2, title: "Log Out" }
+		];
+
+
+		const popup = webix.ui({
+			view: "popup",
+			id: "popup",
+			body: {
+				view: "list",
+				data: popup_data,
+				autoheight: true,
+				autowidth: true,
+				template: "#title#"
+			}
+		});
+
+
 		webix.ui({
 			rows: [
 				{
@@ -49,7 +68,11 @@
 					elements: [
 						{ view: "label", label: "My App", gravity: 10 },
 						{ view: "icon", icon: "wxi-user" },
-						{ view: "button", value: "Profile", gravity: 1, css: "webix_transparent", autowidth: true },
+						{
+							view: "button", value: "Profile", gravity: 1, css: "webix_transparent", autowidth: true, click: function () {
+								popup.show(this.$view);
+							}
+						},
 
 					]
 
@@ -78,22 +101,55 @@
 							view: "form",
 							id: "film_form",
 							gravity: 1,
+							rules: {
+								title: webix.rules.isNotEmpty,
+								year: function (value) {
+									return (value >= 1970 && value <= 2021);
+								},
+								votes: function (value) {
+									return value < 100000
+								},
+								rating: function (value) {
+									return !(value == '' || value == 0);
+
+								}
+							},
 
 							elements: [
 								{
 									margin: 20, rows: [{ template: "Edit films", type: "section" },
-									{ view: "text", name: "title", id: "inp_title", label: "Title" },
-									{ view: "text", name: "year", id: "inp_year", label: "Year" },
-									{ view: "text", name: "ratings", id: "inp_ratings", label: "Ratings" },
-									{ view: "text", name: "votes", id: "inp_votes", label: "Votes" }]
+									{ view: "text", name: "title", id: "inp_title", label: "Title", invalidMessage: "Title can`t be empty" },
+									{ view: "text", name: "year", id: "inp_year", label: "Year", invalidMessage: "Enter year between 1970 and 2021" },
+									{ view: "text", name: "rating", id: "inp_ratings", label: "Ratings", invalidMessage: "Cannot be empty or 0" },
+									{ view: "text", name: "votes", id: "inp_votes", label: "Votes", invalidMessage: "Must be less than 100000" },
+									{}]
 								},
 								{
 									margin: 20, cols: [
-										{ view: "button", value: "Add new", css: "webix_primary", height: 40 },
-										{ view: "button", value: "Clear", height: 40 }
+										{
+											view: "button", value: "Add new", css: "webix_primary", height: 40, click: function () {
+												const form = $$("film_form");
+												const result = form.validate();
+												if (result) {
+													let item_data = form.getValues();
+													$$("films").add(item_data);
+													webix.message("Successfully saved");
+												}
+											}
+										},
+										{
+											view: "button", value: "Clear", height: 40, click: function () {
+												webix.confirm("Are you sure to clean the form?", "confirm-warning").then(function () {
+													const form = $$("film_form");
+													form.clearValidation();
+													form.clear();
+												})
+
+											}
+										}
 									]
 								},
-								{}
+
 
 							]
 						}
@@ -103,8 +159,9 @@
 				{
 					view: "template", template: "The software is provided by <a href=\"https://webix.com\">https://webix.com</a>. All rights reserved (c) ", autoheight: true
 				}
-			]
-		});
+			],
+		}
+		);
 
 	</script>
 </body>
