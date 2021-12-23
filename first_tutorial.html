@@ -58,108 +58,109 @@
 			}
 		});
 
+		const form_full = {
+			view: "form",
+			id: "film_form",
+			gravity: 1,
+			rules: {
+				title: webix.rules.isNotEmpty,
+				year: function (value) {
+					return (value >= 1970 && value <= 2021);
+				},
+				votes: function (value) {
+					return value < 100000
+				},
+				rating: function (value) {
+					return !(value == '' || value == 0);
 
-		webix.ui({
-			rows: [
+				}
+			},
+
+			elements: [
 				{
-					padding: 10,
-					view: "toolbar",
-					css: "webix_dark",
-					elements: [
-						{ view: "label", label: "My App", gravity: 10 },
-						{ view: "icon", icon: "wxi-user" },
-						{
-							view: "button", value: "Profile", gravity: 1, css: "webix_transparent", autowidth: true, click: function () {
-								popup.show(this.$view);
-							}
-						},
-
-					]
-
+					margin: 20, rows: [{ template: "Edit films", type: "section" },
+					{ view: "text", name: "title", id: "inp_title", label: "Title", invalidMessage: "Title can`t be empty" },
+					{ view: "text", name: "year", id: "inp_year", label: "Year", invalidMessage: "Enter year between 1970 and 2021" },
+					{ view: "text", name: "rating", id: "inp_ratings", label: "Ratings", invalidMessage: "Cannot be empty or 0" },
+					{ view: "text", name: "votes", id: "inp_votes", label: "Votes", invalidMessage: "Must be less than 100000" },
+					{}]
 				},
 				{
-					cols: [
+					margin: 20, cols: [
 						{
-							view: "list",
-							id: "menu",
-							data: menu,
-							template: "#title#",
-							gravity: 0.5,
-
-
-						},
-
-						{
-							view: "datatable",
-							id: "films",
-							data: films_dataset,
-							autoConfig: true,
-							gravity: 3
-						},
-
-						{
-							view: "form",
-							id: "film_form",
-							gravity: 1,
-							rules: {
-								title: webix.rules.isNotEmpty,
-								year: function (value) {
-									return (value >= 1970 && value <= 2021);
-								},
-								votes: function (value) {
-									return value < 100000
-								},
-								rating: function (value) {
-									return !(value == '' || value == 0);
-
+							view: "button", value: "Add new", css: "webix_primary", height: 40, click: function () {
+								const form = $$("film_form");
+								const result = form.validate();
+								if (result) {
+									let item_data = form.getValues();
+									$$("films").add(item_data);
+									webix.message("Successfully saved");
 								}
-							},
+							}
+						},
+						{
+							view: "button", value: "Clear", height: 40, click: function () {
+								webix.confirm("Are you sure to clean the form?", "confirm-warning").then(function () {
+									const form = $$("film_form");
+									form.clearValidation();
+									form.clear();
+								})
 
-							elements: [
-								{
-									margin: 20, rows: [{ template: "Edit films", type: "section" },
-									{ view: "text", name: "title", id: "inp_title", label: "Title", invalidMessage: "Title can`t be empty" },
-									{ view: "text", name: "year", id: "inp_year", label: "Year", invalidMessage: "Enter year between 1970 and 2021" },
-									{ view: "text", name: "rating", id: "inp_ratings", label: "Ratings", invalidMessage: "Cannot be empty or 0" },
-									{ view: "text", name: "votes", id: "inp_votes", label: "Votes", invalidMessage: "Must be less than 100000" },
-									{}]
-								},
-								{
-									margin: 20, cols: [
-										{
-											view: "button", value: "Add new", css: "webix_primary", height: 40, click: function () {
-												const form = $$("film_form");
-												const result = form.validate();
-												if (result) {
-													let item_data = form.getValues();
-													$$("films").add(item_data);
-													webix.message("Successfully saved");
-												}
-											}
-										},
-										{
-											view: "button", value: "Clear", height: 40, click: function () {
-												webix.confirm("Are you sure to clean the form?", "confirm-warning").then(function () {
-													const form = $$("film_form");
-													form.clearValidation();
-													form.clear();
-												})
-
-											}
-										}
-									]
-								},
-
-
-							]
+							}
 						}
 					]
 				},
 
+
+			]
+		};
+
+		const datatable = {
+			view: "datatable",
+			id: "films",
+			data: films_dataset,
+			autoConfig: true,
+			gravity: 3
+		};
+		const toolbar = {
+			padding: 10,
+			view: "toolbar",
+			css: "webix_dark",
+			elements: [
+				{ view: "label", label: "My App", gravity: 10 },
+				{ view: "icon", icon: "wxi-user" },
 				{
-					view: "template", template: "The software is provided by <a href=\"https://webix.com\">https://webix.com</a>. All rights reserved (c) ", autoheight: true
-				}
-			],
+					view: "button", value: "Profile", gravity: 1, css: "webix_transparent", autowidth: true, click: function () {
+						popup.show(this.$view);
+					}
+				},
+
+			]
+
+		};
+		const list = {
+			view: "list",
+			id: "menu",
+			data: menu,
+			template: "#title#",
+			gravity: 0.5,
+			select: true
+		};
+		const footer = {
+			view: "template", template: "The software is provided by <a href=\"https://webix.com\">https://webix.com</a>. All rights reserved (c) ", autoheight: true
+		}
+
+
+		webix.ui({
+			rows: [toolbar, {
+				cells: [ //try replacing cells with rows or cols
+					{ id: "Dashboard", cols: [list, datatable, form_full] },
+					{ id: "Users", template: "Users View" }
+
+				]
+			}, footer],
+
+
 		}
 		);
 
