@@ -51,16 +51,12 @@
 			body: {
 				view: "list",
 				data: popup_data,
-				autoheight:true, 
-				autowidth:true,
+				autoheight: true,
+				autowidth: true,
 				template: "#title#"
-			},
-			///position: function (state) {
-				///state.left += 850;
-				///state.top -= 390;
-			///}
+			}
 		});
-		
+
 
 		webix.ui({
 			rows: [
@@ -75,7 +71,6 @@
 							view: "button", value: "Profile", gravity: 1, css: "webix_transparent", autowidth: true, click: function () {
 								let buttons = document.querySelectorAll("button");
 								let profile_button = buttons[0];
-								console.log(buttons)
 								popup.show(profile_button);
 							}
 						},
