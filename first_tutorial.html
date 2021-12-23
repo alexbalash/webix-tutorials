@@ -45,6 +45,7 @@
 			{ id: 2, title: "Log Out" }
 		];
 
+
 		const popup = webix.ui({
 			view: "popup",
 			id: "popup",
@@ -69,9 +70,7 @@
 						{ view: "icon", icon: "wxi-user" },
 						{
 							view: "button", value: "Profile", gravity: 1, css: "webix_transparent", autowidth: true, click: function () {
-								let buttons = document.querySelectorAll("button");
-								let profile_button = buttons[0];
-								popup.show(profile_button);
+								popup.show(this.$view);
 							}
 						},
 
@@ -105,23 +104,13 @@
 							rules: {
 								title: webix.rules.isNotEmpty,
 								year: function (value) {
-									if (value >= 1970 && value <= 2021) {
-										return true
-									}
-									else {
-										return false
-									}
+									return (value >= 1970 && value <= 2021);
 								},
 								votes: function (value) {
 									return value < 100000
 								},
 								rating: function (value) {
-									if (value == '' || value == 0) {
-										return false
-									}
-									else {
-										return true
-									}
+									return !(value == '' || value == 0);
 
 								}
 							},
@@ -139,19 +128,21 @@
 									margin: 20, cols: [
 										{
 											view: "button", value: "Add new", css: "webix_primary", height: 40, click: function () {
-												let result = $$("film_form").validate();
+												const form = $$("film_form");
+												const result = form.validate();
 												if (result) {
-													let item_data = $$("film_form").getValues();
+													let item_data = form.getValues();
 													$$("films").add(item_data);
-													webix.message("Successful validation");
+													webix.message("Successfully saved");
 												}
 											}
 										},
 										{
 											view: "button", value: "Clear", height: 40, click: function () {
 												webix.confirm("Are you sure to clean the form?", "confirm-warning").then(function () {
-													$$("film_form").clearValidation();
-													$$("film_form").clear()
+													const form = $$("film_form");
+													form.clearValidation();
+													form.clear();
 												})
 
 											}
