@@ -12,11 +12,27 @@
 		}
 
 		.webix_list {
-			background-color: lightgrey;
+			background-color: #f4f5f9;
 		}
 
 		.webix_template {
 			text-align: center;
+		}
+
+		.header-like {
+			background-color: #f4f5f9
+		}
+
+		.myhover {
+			background: #F0DCB6;
+		}
+
+		.green {
+			background-color: #76e485
+		}
+
+		.webix_list_item .webix_icon {
+			float: right;
 		}
 	</style>
 </head>
@@ -25,10 +41,11 @@
 	<div id="test"></div>
 	<script type="text/javascript" charset="utf-8">
 		let menu = [
-			{ id: 1, title: "Dashboard" },
-			{ id: 2, title: "Users" },
-			{ id: 3, title: "Products" },
-			{ id: 4, title: "Locations" },
+			{ id: "Dashboard", title: "Dashboard" },
+			{ id: "Dashboard1", title: "Dashboard1" },
+			{ id: "Users", title: "Users" },
+			{ id: "Products", title: "Products" },
+			{ id: "Admin", title: "Admin" },
 		];
 
 		let films_dataset = [
@@ -140,29 +157,175 @@
 		};
 		const list = {
 			view: "list",
-			id: "menu",
+			id: "menu1",
 			data: menu,
 			template: "#title#",
-			gravity: 0.5,
-			select: true
+			select: true,
+			width: 250,
+			on: {
+				onAfterSelect: function (id) {
+					$$(id).show();
+				}
+			},
 		};
 		const footer = {
 			view: "template", template: "The software is provided by <a href=\"https://webix.com\">https://webix.com</a>. All rights reserved (c) ", autoheight: true
-		}
+		};
 
+		const userDatatable = {
+			view: "datatable",
+			id: "userDatatable",
+			url: "data.js",
+			hover: "myhover",
+			columns: [
+				{ id: "id", header: "", width: 50, css: "header-like" },
+				{ id: "title", header: ["Film title", { content: "textFilter" }], fillspace: true, sort: "string", minWidth: 500 },
+				{ id: "year", header: ["Year", { content: "numberFilter" }], sort: "int" },
+				{ id: "votes", header: ["Votes", { content: "numberFilter" }], sort: "int" },
+				{ id: "rating", header: ["Rating", { content: "numberFilter" }], sort: "int" },
+				{ id: "rank", header: ["Rank", { content: "numberFilter" }], sort: "int" },
+				{ id: "del", template: "{common.trashIcon()}" }],
+			onClick: {
+				"wxi-trash": function (e, id) {
+					this.remove(id);
+					return false;
+				}
+			},
+			gravity: 2,
+		};
+		const userForm = {
+			view: "form",
+			id: "user_form",
+			rows: [
+				{ view: "text", name: "title", id: "user_title", label: "Film Title" },
+				{ view: "text", name: "year", id: "user_year", label: "Released" },
+				{ view: "text", name: "votes", id: "user_votes", label: "Votes" },
+				{ view: "button", id: "btn_save", value: "Save", click: saveItem },
+				{ view: "button", id: "btn_clear", value: "Clear", click: function () { $$("user_form").clear() } },
+				{}
+			],
+			gravity: 1
+		};
+
+		function saveItem() {
+			let form = $$("user_form");
+			let table = $$("userDatatable");
+			let item_data = form.getValues();
+			if (item_data.id) {
+				table.updateItem(item_data.id, item_data);
+			} else {
+				table.add(item_data);
+			}
+		};
+
+		const userList = {
+			view: "list",
+			id: "userList",
+			url: "users.js",
+			template: obj => {
+				const ind = $$("userList").getIndexById(obj.id);
+				return `<div class="${ind < 5 ? "green" : ""}">${obj.name} from ${obj.country} <span class='webix_icon wxi-close'></span></div>`;
+			},
+			header: [{ content: "textFilter" }],
+			select: true,
+			onClick: {
+				webix_icon: function (e, id) {
+					this.remove(id);
+					return false;
+				}
+			},
+
+		};
+
+		const chart = {
+			view: "chart",
+			type: "bar",
+			value: "#age#",
+			border: true,
+			xAxis: {
+				template: "#age#",
+				title: "Age"
+			},
+			url: "users.js"
+		};
+
+		const filter = {
+			view: "toolbar",
+			elements: [
+				{ view: "text", id: "list_input" },
+				{
+					view: "button", id: "sort_asc", css: "webix_primary", value: "Sort asc", maxWidth: 200, click: function () {
+						$$("userList").sort({
+							by: "#name#",
+							dir: "asc",
+							as: "string"
+						});
+					}
+				},
+				{
+					view: "button", id: "sort_desc", css: "webix_primary", value: "Sort desc", maxWidth: 200, click: function () {
+						$$("userList").sort({
+							by: "#name#",
+							dir: "desc",
+							as: "string"
+						});
+					}
+				}
+			],
+		};
+
+		const treetable = {
+			view: "treetable",
+			id: "treetable",
+			select: "cell",
+			columns: [
+				{
+					id: "id",
+					header: "",
+					width: 60
+				},
+				{
+					id: "title",
+					header: "Title",
+					template: "{common.treetable()} #title#",
+					width: 200
+				},
+				{
+					id: "price",
+					header: "Price",
+					width: 200
+				}
+			],
+			url: "products.js",
+			on: {
+				onAfterLoad: function () {
+					$$("treetable").openAll();
+				}
+			},
+		};
+
+		let main = {
+			cells: [
+				{ id: "Dashboard", cols: [datatable, form_full] },
+				{ id: "Dashboard1", cols: [userForm, userDatatable] },
+				{ id: "Users", rows: [filter, userList, chart] },
+				{ id: "Products", cols: [treetable] },
+				{ id: "Admin", template: "Admin View" }
+
+			]
+		};
 
 		webix.ui({
-			rows: [toolbar, {
-				cells: [ //try replacing cells with rows or cols
-					{ id: "Dashboard", cols: [list, datatable, form_full] },
-					{ id: "Users", template: "Users View" }
-
-				]
-			}, footer],
-
-
+			rows: [toolbar, { cols: [list, main] }, footer],
 		}
 		);
+		$$("list_input").attachEvent("onTimedKeyPress", function () {
+			let value = this.getValue().toLowerCase();
+			$$("userList").filter(function (obj) {
+				return obj.name.toLowerCase().indexOf(value) !== -1;
+			})
+		});
+
 
 	</script>
 </body>
