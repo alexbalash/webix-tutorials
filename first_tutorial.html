@@ -109,7 +109,7 @@
 								const form = $$("film_form");
 								const result = form.validate();
 								if (result) {
-									let item_data = form.getValues();
+									const item_data = form.getValues();
 									$$("films").add(item_data);
 									webix.message("Successfully saved");
 								}
@@ -208,9 +208,9 @@
 		};
 
 		function saveItem() {
-			let form = $$("user_form");
-			let table = $$("userDatatable");
-			let item_data = form.getValues();
+			const form = $$("user_form");
+			const table = $$("userDatatable");
+			const item_data = form.getValues();
 			if (item_data.id) {
 				table.updateItem(item_data.id, item_data);
 			} else {
@@ -226,7 +226,6 @@
 				const ind = $$("userList").getIndexById(obj.id);
 				return `<div class="${ind < 5 ? "green" : ""}">${obj.name} from ${obj.country} <span class='webix_icon wxi-close'></span></div>`;
 			},
-			header: [{ content: "textFilter" }],
 			select: true,
 			onClick: {
 				webix_icon: function (e, id) {
