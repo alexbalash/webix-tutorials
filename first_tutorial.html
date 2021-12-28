@@ -4,6 +4,9 @@
 	<meta charset="utf-8">
 	<title> Test DataTable</title>
 	<script type="text/javascript" src="http://cdn.webix.com/edge/webix.js"></script>
+	<script type="text/javascript" src="/dashboard.js"></script>
+	<script type="text/javascript" src="/list_and_chart.js"></script>
+	<script type="text/javascript" src="/treetable.js"></script>
 	<link rel="stylesheet" type="text/css" href="http://cdn.webix.com/edge/webix.css">
 
 	<style type="text/css">
@@ -28,7 +31,7 @@
 		}
 
 		.green {
-			background-color: #76e485
+			background-color: #fff6a8
 		}
 
 		.webix_list_item .webix_icon {
@@ -40,6 +43,14 @@
 <body>
 	<div id="test"></div>
 	<script type="text/javascript" charset="utf-8">
+	const newUsers = [{ "id":13, "name":"Alex Houi", "age":59, "country":"China"},
+	{ "id":14, "name":"Ninel Groe", "age":72, "country":"Germany"},
+	{ "id":15, "name":"Roy Van", "age":27, "country":"Canada"},
+	{ "id":16, "name":"Alexey Ivanov", "age":54, "country":"Russia"},
+	{ "id":17, "name":"Mi Lo", "age":40, "country":"China"},
+	{ "id":18, "name":"Mall Nou", "age":36, "country":"USA"}]
+		
+	
 		let menu = [
 			{ id: "Dashboard", title: "Dashboard" },
 			{ id: "Dashboard1", title: "Dashboard1" },
@@ -61,7 +72,6 @@
 			{ id: 1, title: "Settings" },
 			{ id: 2, title: "Log Out" }
 		];
-
 
 		const popup = webix.ui({
 			view: "popup",
@@ -128,7 +138,6 @@
 					]
 				},
 
-
 			]
 		};
 
@@ -171,148 +180,20 @@
 		const footer = {
 			view: "template", template: "The software is provided by <a href=\"https://webix.com\">https://webix.com</a>. All rights reserved (c) ", autoheight: true
 		};
-
-		const userDatatable = {
-			view: "datatable",
-			id: "userDatatable",
-			url: "data.js",
-			hover: "myhover",
-			columns: [
-				{ id: "id", header: "", width: 50, css: "header-like" },
-				{ id: "title", header: ["Film title", { content: "textFilter" }], fillspace: true, sort: "string", minWidth: 500 },
-				{ id: "year", header: ["Year", { content: "numberFilter" }], sort: "int" },
-				{ id: "votes", header: ["Votes", { content: "numberFilter" }], sort: "int" },
-				{ id: "rating", header: ["Rating", { content: "numberFilter" }], sort: "int" },
-				{ id: "rank", header: ["Rank", { content: "numberFilter" }], sort: "int" },
-				{ id: "del", template: "{common.trashIcon()}" }],
-			onClick: {
-				"wxi-trash": function (e, id) {
-					this.remove(id);
-					return false;
-				}
-			},
-			gravity: 2,
-		};
-		const userForm = {
-			view: "form",
-			id: "user_form",
-			rows: [
-				{ view: "text", name: "title", id: "user_title", label: "Film Title" },
-				{ view: "text", name: "year", id: "user_year", label: "Released" },
-				{ view: "text", name: "votes", id: "user_votes", label: "Votes" },
-				{ view: "button", id: "btn_save", value: "Save", click: saveItem },
-				{ view: "button", id: "btn_clear", value: "Clear", click: function () { $$("user_form").clear() } },
-				{}
-			],
-			gravity: 1
-		};
-
-		function saveItem() {
-			const form = $$("user_form");
-			const table = $$("userDatatable");
-			const item_data = form.getValues();
-			if (item_data.id) {
-				table.updateItem(item_data.id, item_data);
-			} else {
-				table.add(item_data);
-			}
-		};
-
-		const userList = {
-			view: "list",
-			id: "userList",
-			url: "users.js",
-			template: obj => {
-				const ind = $$("userList").getIndexById(obj.id);
-				return `<div class="${ind < 5 ? "green" : ""}">${obj.name} from ${obj.country} <span class='webix_icon wxi-close'></span></div>`;
-			},
-			select: true,
-			onClick: {
-				webix_icon: function (e, id) {
-					this.remove(id);
-					return false;
-				}
-			},
-
-		};
-
-		const chart = {
-			view: "chart",
-			type: "bar",
-			value: "#age#",
-			border: true,
-			xAxis: {
-				template: "#age#",
-				title: "Age"
-			},
-			url: "users.js"
-		};
-
-		const filter = {
-			view: "toolbar",
-			elements: [
-				{ view: "text", id: "list_input" },
-				{
-					view: "button", id: "sort_asc", css: "webix_primary", value: "Sort asc", maxWidth: 200, click: function () {
-						$$("userList").sort({
-							by: "#name#",
-							dir: "asc",
-							as: "string"
-						});
-					}
-				},
-				{
-					view: "button", id: "sort_desc", css: "webix_primary", value: "Sort desc", maxWidth: 200, click: function () {
-						$$("userList").sort({
-							by: "#name#",
-							dir: "desc",
-							as: "string"
-						});
-					}
-				}
-			],
-		};
-
-		const treetable = {
-			view: "treetable",
-			id: "treetable",
-			select: "cell",
-			columns: [
-				{
-					id: "id",
-					header: "",
-					width: 60
-				},
-				{
-					id: "title",
-					header: "Title",
-					template: "{common.treetable()} #title#",
-					width: 200
-				},
-				{
-					id: "price",
-					header: "Price",
-					width: 200
-				}
-			],
-			url: "products.js",
-			on: {
-				onAfterLoad: function () {
-					$$("treetable").openAll();
-				}
-			},
-		};
-
+		
 		let main = {
 			cells: [
 				{ id: "Dashboard", cols: [datatable, form_full] },
-				{ id: "Dashboard1", cols: [userForm, userDatatable] },
+				{ id: "Dashboard1", cols: [userForm, { rows: [upperFilter, userDatatable] }] },
 				{ id: "Users", rows: [filter, userList, chart] },
 				{ id: "Products", cols: [treetable] },
 				{ id: "Admin", template: "Admin View" }
 
 			]
 		};
+		webix.protoUI({
+			name: "editlist"
+		}, webix.EditAbility, webix.ui.list);
 
 		webix.ui({
 			rows: [toolbar, { cols: [list, main] }, footer],
@@ -324,7 +205,43 @@
 				return obj.name.toLowerCase().indexOf(value) !== -1;
 			})
 		});
+		$$("user_form").bind($$("userDatatable"));
+		$$("user_form").attachEvent("onChange", function () {
+			this.save();
+		});
+		$$("userDatatable").registerFilter(
+			$$("selector"),
+			{
+				columnId: "year",
+				compare: function (value, filter, item) {
+					if (filter == 1) { return value}
+					else if (filter == 2) { return value <= 1980 }
+					else if (filter == 3) {
 
+						if (value > 1980 && value <= 2000) {
+							return value
+						}
+					}
+					else if (filter == 4) {
+						if (value > 2000 && value <= 2021) {
+							return value
+						}
+					}
+				}
+			},
+			{
+				getValue: function (node) { return node.getValue(); },
+				setValue: function (node, value) { node.setValue(value); }
+			}
+		);
+		$$("chart").sync($$("userList"), function(){
+			this.group({
+    by:"country", 
+    map:{
+        age:["age","count"]
+    }   
+});
+			});
 
 	</script>
 </body>
