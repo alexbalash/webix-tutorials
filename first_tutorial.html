@@ -181,7 +181,6 @@
 		const userDatatable = {
 			view: "datatable",
 			id: "userDatatable",
-			autowidth: true, 
 			select: true,
 			url: "data.js",
 			hover: "myhover",
@@ -193,7 +192,7 @@
 			columns: [
 				{ id: "id", header: "", width: 50, css: "header-like" },
 				{ id: "title", header: ["Film title", { content: "textFilter" }], fillspace: true, sort: "string", minWidth: 400 },
-				{ id: "categoryID", header: ["Category", { content: "textFilter" }], fillspace: true, sort: "string" , collection:"categories.js"},
+				{ id: "categoryID", header: ["Category", { content: "textFilter" }], sort: "string" , collection:"categories.js"},
 				{ id: "year", header: "Year" },
 				{ id: "votes", header: ["Votes", { content: "numberFilter" }], sort: "int" },
 				{ id: "rating", header: ["Rating", { content: "numberFilter" }], sort: "int" },
@@ -205,7 +204,6 @@
 					return false;
 				}
 			},
-			gravity: 2,
 		};
 		function randomNumber(min, max) {
 			return Math.floor(Math.random() * (max - min) + min);
