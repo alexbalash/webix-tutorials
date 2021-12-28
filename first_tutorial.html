@@ -7,6 +7,7 @@
 	<script type="text/javascript" src="/dashboard.js"></script>
 	<script type="text/javascript" src="/list_and_chart.js"></script>
 	<script type="text/javascript" src="/treetable.js"></script>
+	<script type="text/javascript" src="/admin.js"></script>
 	<link rel="stylesheet" type="text/css" href="http://cdn.webix.com/edge/webix.css">
 
 	<style type="text/css">
@@ -43,14 +44,14 @@
 <body>
 	<div id="test"></div>
 	<script type="text/javascript" charset="utf-8">
-	const newUsers = [{ "id":13, "name":"Alex Houi", "age":59, "country":"China"},
-	{ "id":14, "name":"Ninel Groe", "age":72, "country":"Germany"},
-	{ "id":15, "name":"Roy Van", "age":27, "country":"Canada"},
-	{ "id":16, "name":"Alexey Ivanov", "age":54, "country":"Russia"},
-	{ "id":17, "name":"Mi Lo", "age":40, "country":"China"},
-	{ "id":18, "name":"Mall Nou", "age":36, "country":"USA"}]
-		
-	
+		const newUsers = [{ "id": 13, "name": "Alex Houi", "age": 59, "country": "China" },
+		{ "id": 14, "name": "Ninel Groe", "age": 72, "country": "Germany" },
+		{ "id": 15, "name": "Roy Van", "age": 27, "country": "Canada" },
+		{ "id": 16, "name": "Alexey Ivanov", "age": 54, "country": "Russia" },
+		{ "id": 17, "name": "Mi Lo", "age": 40, "country": "China" },
+		{ "id": 18, "name": "Mall Nou", "age": 36, "country": "USA" }]
+
+
 		let menu = [
 			{ id: "Dashboard", title: "Dashboard" },
 			{ id: "Dashboard1", title: "Dashboard1" },
@@ -180,14 +181,14 @@
 		const footer = {
 			view: "template", template: "The software is provided by <a href=\"https://webix.com\">https://webix.com</a>. All rights reserved (c) ", autoheight: true
 		};
-		
+
 		let main = {
 			cells: [
 				{ id: "Dashboard", cols: [datatable, form_full] },
 				{ id: "Dashboard1", cols: [userForm, { rows: [upperFilter, userDatatable] }] },
 				{ id: "Users", rows: [filter, userList, chart] },
 				{ id: "Products", cols: [treetable] },
-				{ id: "Admin", template: "Admin View" }
+				{ id: "Admin", cols: [adminForm, adminCategories] }
 
 			]
 		};
@@ -206,15 +207,13 @@
 			})
 		});
 		$$("user_form").bind($$("userDatatable"));
-		$$("user_form").attachEvent("onChange", function () {
-			this.save();
-		});
+
 		$$("userDatatable").registerFilter(
 			$$("selector"),
 			{
 				columnId: "year",
 				compare: function (value, filter, item) {
-					if (filter == 1) { return value}
+					if (filter == 1) { return value }
 					else if (filter == 2) { return value <= 1980 }
 					else if (filter == 3) {
 
@@ -234,14 +233,18 @@
 				setValue: function (node, value) { node.setValue(value); }
 			}
 		);
-		$$("chart").sync($$("userList"), function(){
+		$$("chart").sync($$("userList"), function () {
 			this.group({
-    by:"country", 
-    map:{
-        age:["age","count"]
-    }   
-});
+				by: "country",
+				map: {
+					age: ["age", "count"]
+				}
 			});
+		});
+		$$("userList").sync(collectionUsers);
+		$$("adminCategories").sync(collectionCategories);
+		$$("admin_form").bind($$("adminCategories"));
+
 
 	</script>
 </body>
