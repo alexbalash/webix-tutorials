@@ -181,21 +181,19 @@
 		const userDatatable = {
 			view: "datatable",
 			id: "userDatatable",
+			autowidth: true, 
 			select: true,
 			url: "data.js",
 			hover: "myhover",
 			scheme: {
 				$init: function (obj) {
-					for (let i in obj) {
 						obj.categoryID = randomNumber(1, 4);
-					}
-					
 				},
 			},
 			columns: [
 				{ id: "id", header: "", width: 50, css: "header-like" },
-				{ id: "title", header: ["Film title", { content: "textFilter" }], fillspace: true, sort: "string", minWidth: 500 },
-				{ id: "category", header: ["Category", { content: "textFilter" }], fillspace: true, sort: "string" , collection:"categories.js"},
+				{ id: "title", header: ["Film title", { content: "textFilter" }], fillspace: true, sort: "string", minWidth: 400 },
+				{ id: "categoryID", header: ["Category", { content: "textFilter" }], fillspace: true, sort: "string" , collection:"categories.js"},
 				{ id: "year", header: "Year" },
 				{ id: "votes", header: ["Votes", { content: "numberFilter" }], sort: "int" },
 				{ id: "rating", header: ["Rating", { content: "numberFilter" }], sort: "int" },
@@ -223,7 +221,7 @@
 				{ view: "button", id: "btn_clear", value: "Clear", click: function () { $$("user_form").clear() } },
 				{}
 			],
-			gravity: 0.5
+			width:300
 		};
 
 		function saveItem() {
@@ -272,10 +270,14 @@
 			value: "#age#",
 			border: true,
 			xAxis: {
-				template: "#age#",
-				title: "Age"
+				template: "#country#",
+				title: "Country"
 			},
-			url: "users.js",
+			yAxis:{
+				start:0,
+        end:10,
+        step:1
+			}
 			
 		};
 
@@ -417,17 +419,14 @@
 				setValue: function (node, value) { node.setValue(value); }
 			}
 		);
-		$$("userList").sync($$("chart"), function(){
+		$$("chart").sync($$("userList"), function(){
 			this.group({
     by:"country", 
     map:{
-        name:["name","count"]
+        age:["age","count"]
     }   
 });
 			});
-		let collection = $$("userDatatable").getColumnConfig("category").collection;         
-          collection.add({ id:obj.categoryID, value:collection.value })
-
 
 	</script>
 </body>
