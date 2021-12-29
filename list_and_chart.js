@@ -1,5 +1,12 @@
 let collectionUsers = new webix.DataCollection({
   url: "users.js",
+  scheme: {
+    $init: function (obj) {
+      if (obj.age > 26) {
+        obj.$css = "green";
+      }
+    },
+  },
 });
 
 const userList = {
@@ -12,19 +19,13 @@ const userList = {
   rules: {
     name: webix.rules.isNotEmpty,
   },
-  scheme: {
-    $init: function (obj) {
-      if (obj.age > 26) {
-        obj.$css = "green";
-      }
-    },
-  },
+  
   template:
     "#name#, #age#, from #country# <span class='webix_icon wxi-close'></span>",
   select: true,
   onClick: {
     webix_icon: function (e, id) {
-      this.remove(id);
+      collectionUsers.remove(id)
       return false;
     },
   },
